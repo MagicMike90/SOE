@@ -1,35 +1,58 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
+# Set if you are behind proxy
 
-# Specify Vagrant version and Vagrant API version
-Vagrant.require_version ">= 1.6.0"
-VAGRANTFILE_API_VERSION = "2"
+required_plugins = %w( vagrant-hostmanager vagrant-notify-forwarder )
+required_plugins.each do |plugin|
+    exec "vagrant plugin install #{plugin};vagrant #{ARGV.join(" ")}" unless Vagrant.has_plugin? plugin || ARGV[0] == 'plugin'
+end
 
-# Create and configure the VM(s)
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+#proxy_url = "http://user:pass@proxy.com:8080/"
 
-  # Assign a friendly name to this host VM
-  config.vm.hostname = "docker-host"
+Vagrant.configure("2") do |config|
 
-  # Skip checking for an updated Vagrant box
-  config.vm.box_check_update = false
+	if !defined?(proxy_url) || proxy_url.nil? || proxy_url.empty?
 
-  # Always use Vagrant's default insecure key
-  config.ssh.insert_key = false
+		# No proxy setup necessary.
 
-  # Spin up a "host box" for use with the Docker provider
-  # and then provision it with Docker
-  config.vm.box = "ubuntu/trusty64"
-  config.vm.provision "docker"
-  config.vm.network "forwarded_port", guest: 3306, host: 3306, host_ip: "localhost", auto_correct: true
-  # Disable synced folders (prevents an NFS error on "vagrant up")
-  config.vm.synced_folder ".", "/vagrant", disabled: true
+	else
+		# Setup proxies
 
-  # Set the mem/cpu requirements
-  config.vm.provider :virtualbox do |vb|
-    vb.memory = 2048
-    vb.cpus = 4
-    vb.name = "docker-host"
-    vb.check_guest_additions = false
-  end
+		ENV['http_proxy']  = proxy_url
+		ENV['https_proxy'] = proxy_url
+	end
+	
+	config.ssh.insert_key = false
+
+	config.vm.define "docker-provider"
+	config.vm.hostname = "docker-provider"
+	config.vm.box = "lookfwd/scrapybook"
+
+
+	# Setting up ports
+	(
+		[9200] +                      # ES
+		[6379] +                      # Redis
+		[3306] +                      # MySQL
+		[9312] +                      # Web
+		(6800..6803).to_a +           # Scrapyd
+		[21] + (30000..30009).to_a  + # Spark
+	[]).each do |port|
+		config.vm.network "forwarded_port", guest: port, host: port, host_ip: "localhost", auto_correct: true
+	end
+
+	# Set the mem/cpu requirements
+	config.vm.provider :virtualbox do |vb|
+		vb.memory = 2048
+		vb.cpus = 4
+		vb.name = "docker-provider"
+		vb.check_guest_additions = false
+	end
+
+#   config.hostmanager.enabled = true
+#   config.hostmanager.manage_guest = true
+#   config.vm.provision :hostmanager
+
+#   config.vm.provision :ansible do |ansible|
+#     ansible.playbook      = "ansible/playbook.yml"
+#     ansible.sudo          = true
+#   end
 end

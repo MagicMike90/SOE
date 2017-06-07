@@ -1,7 +1,0 @@
-- name: Install docker on Vagrant VM
-  hosts: all
-  remote_user: root
-  become: yes
-
-  roles:
-    - role: docker

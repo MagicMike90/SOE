@@ -1,5 +1,0 @@
----
-
-docker:
-  version: java8
-  apt_repository: ppa:webupd8team/java

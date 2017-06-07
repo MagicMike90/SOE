@@ -1,11 +1,17 @@
-# Set if you are behind proxy
-
-required_plugins = %w( vagrant-hostmanager vagrant-notify-forwarder )
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+required_plugins = %w( vagrant-notify-forwarder vagrant-hostmanager)
 required_plugins.each do |plugin|
-    exec "vagrant plugin install #{plugin};vagrant #{ARGV.join(" ")}" unless Vagrant.has_plugin? plugin || ARGV[0] == 'plugin'
+  system "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
 end
 
-#proxy_url = "http://user:pass@proxy.com:8080/"
+$script = <<SCRIPT
+wget "https://download.docker.com/linux/ubuntu/dists/trusty/pool/stable/amd64/docker-ce_17.03.1~ce-0~ubuntu-trusty_amd64.deb"
+apt-get install libsystemd-journal0
+dpkg -i docker-ce_17.03.1~ce-0~ubuntu-trusty_amd64.deb
+groupadd docker
+usermod -aG docker $USER
+SCRIPT
 
 Vagrant.configure("2") do |config|
 
@@ -19,41 +25,49 @@ Vagrant.configure("2") do |config|
 		ENV['http_proxy']  = proxy_url
 		ENV['https_proxy'] = proxy_url
 	end
-	
-	config.ssh.insert_key = false
 
 	config.vm.define "host"
-	config.vm.hostname = "host"
+
+	# config.vm.network "private_network", ip: "192.168.50.50"
 	config.vm.box = "williamyeh/ubuntu-trusty64-docker"
+	# config.vm.box = "lookfwd/scrapybook"
 
-	# Setting up ports
-	(
-		[29324] +
-		[9200] +                      # ES
-		[6379] +                      # Redis
-		[3306] +                      # MySQL
-		[9312] +                      # Web
-		(6800..6803).to_a +           # Scrapyd
-		[21] + (30000..30009).to_a  + # Spark
-	[]).each do |port|
-		config.vm.network "forwarded_port", guest: port, host: port, host_ip: "localhost", auto_correct: true
-	end
+	# config.vm.provision "docker"
+	# config.vm.provision "shell", inline: "ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill"
+	
+	# Skip checking for an updated Vagrant box
+	config.vm.box_check_update = false
 
-
+	# Always use Vagrant's default insecure key
+	# config.ssh.insert_key = false
+	
 	# Set the mem/cpu requirements
 	config.vm.provider :virtualbox do |vb|
 		vb.memory = 2048
 		vb.cpus = 4
-		vb.name = "docker-provider"
+		vb.name = "host"
 		vb.check_guest_additions = false
 	end
 
-#   config.hostmanager.enabled = true
-#   config.hostmanager.manage_guest = true
-#   config.vm.provision :hostmanager
+	# Setting up ports
+	(
+		[2222] +					#dev
+		[9200] +                      # ES
+		[6379] +                      # Redis
+		[3306] +                      # MySQL
+		[9312] +                      # Web
+	[]).each do |port|
+		config.vm.network "forwarded_port", guest: port, host: port, host_ip: "localhost", auto_correct: true
+	end
+	config.notify_forwarder.port = 22020
 
-#   config.vm.provision :ansible do |ansible|
-#     ansible.playbook      = "ansible/playbook.yml"
-#     ansible.sudo          = true
-#   end
+
+	# config.ssh.username = "docker"  
+	# config.ssh.password = "tcuser"      
+	
+	# # Only run the provisioning on the first 'vagrant up'
+	# if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/default/*/id").empty?
+	# 	config.vm.provision "shell",inline: "docker.sh"
+	# end
+	# config.vm.provision "shell", inline: $script
 end

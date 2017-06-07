@@ -1,0 +1,11 @@
+- name: Install docker on Vagrant VM
+  hosts: all
+  remote_user: root
+  become: yes
+  tasks:
+    - name: update apt cache
+      apt: update_cache=yes
+    - name: install required packages
+      apt: name={{ item }} state=present
+      with_items:
+        - docker.io

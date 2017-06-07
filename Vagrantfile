@@ -7,6 +7,7 @@ host_vagrantfile = "./host/Vagrantfile"
 force_host_vm = TRUE
 ENV['VAGRANT_DEFAULT_PROVIDER'] = "docker"
 
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   config.vm.define "mysql" do |db|
@@ -38,7 +39,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       d.name = "dev"
       d.build_dir = "./docker/ubuntu"
 
+
 			d.vagrant_machine = "host"
+
 			d.vagrant_vagrantfile = host_vagrantfile
 			d.force_host_vm = force_host_vm
       #use for testing
@@ -50,7 +53,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # d.remains_running = true
 		end
 		
-		# dev.vm.synced_folder ".", "/root/book"
     		
 		dev.vm.network "forwarded_port", guest: 6800, host: 6800
 		dev.vm.network "forwarded_port", guest: 2222, host: 2222
@@ -59,4 +61,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.ssh.username = 'root'
   config.ssh.private_key_path = 'insecure_key'
+
 end

@@ -32,11 +32,6 @@ Vagrant.configure("2") do |config|
 	config.vm.box = "williamyeh/ubuntu-trusty64-docker"
 	# config.vm.box = "lookfwd/scrapybook"
 
-	# config.vm.provision "docker"
-	# config.vm.provision "shell", inline: "ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill"
-	
-	# Skip checking for an updated Vagrant box
-	config.vm.box_check_update = false
 
 
 	# Setting up ports

@@ -36,6 +36,7 @@ Vagrant.configure("2") do |config|
 
 	# Setting up ports
 	(
+		[27017] +  					 #MongoDB
 		[2222] +					#dev
 		[9200] +                      # ES
 		[6379] +                      # Redis

@@ -1,4 +1,4 @@
-- name: Install docker on Vagrant VM
+- name: Setup scrapy environment
   hosts: all
   remote_user: root
   become: yes
@@ -8,4 +8,10 @@
     - name: install required packages
       apt: name={{ item }} state=present
       with_items:
-        - docker.io
+        - python-dev 
+        - python-pip 
+        - libxml2-dev 
+        - libxslt1-dev 
+        - zlib1g-dev 
+        - libffi-dev 
+        - libssl-dev

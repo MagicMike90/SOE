@@ -63,15 +63,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #     #use for testing
   #     # d.cmd = ["ping", "-c 51", "127.0.0.1"]
 
-  #     d.link("mysql:mysql")
+  #     # d.link("mysql:mysql")
 
 	# 		d.has_ssh = true
   #     # d.remains_running = true
 	# 	end
 		
     		
-	# 	dev.vm.network "forwarded_port", guest: 6800, host: 6800
-	# 	dev.vm.network "forwarded_port", guest: 2222, host: 2222
+	# 	# dev.vm.network "forwarded_port", guest: 6800, host: 6800
+	# 	# dev.vm.network "forwarded_port", guest: 2222, host: 2222
 	# 	dev.vm.hostname = "dev"
 	# end
 

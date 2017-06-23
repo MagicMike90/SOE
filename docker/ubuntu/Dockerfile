@@ -5,19 +5,20 @@ RUN rm -f /etc/service/sshd/down
 RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 RUN /usr/sbin/enable_insecure_key
 
-# FROM ubuntu:16.04
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 627220E7
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates procps python-pip
+RUN echo 'deb http://archive.scrapy.org/ubuntu scrapy main' | sudo tee /etc/apt/sources.list.d/scrapy.list
+RUN sudo apt-get update && sudo apt-get install -y scrapy-0.24 scrapyd
 
-# RUN apt-get update && apt-get install -y openssh-server
-# RUN mkdir /var/run/sshd
-# RUN echo 'root:screencast' | chpasswd
-# RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+# Install some standard libs
+RUN pip install requests celery[redis] PyPDF2
 
-# # SSH login fix. Otherwise user is kicked off after login
-# RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+# Add our defaults file for increasing file limit
+COPY scrapyd /etc/default/
 
-# ENV NOTVISIBLE "in users profile"
-# RUN echo "export VISIBLE=now" >> /etc/profile
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# EXPOSE 22
-# CMD ["/usr/sbin/sshd", "-D"]
-# FROM ubuntu-upstart
+EXPOSE 6800
+CMD ["scrapyd"]
+

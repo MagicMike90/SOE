@@ -15,3 +15,5 @@
         - zlib1g-dev 
         - libffi-dev 
         - libssl-dev
+    - name: install scrapy
+      command: pip install scrapy

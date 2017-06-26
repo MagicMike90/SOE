@@ -16,9 +16,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       d.image="mongo:3.4.4"
       # d.build_dir = "./docker/mysql"
       d.name = "mongo"
-      d.vagrant_machine = "host"
-			d.vagrant_vagrantfile = host_vagrantfile
-			d.force_host_vm = force_host_vm
+      
+      # d.vagrant_machine = "host"
+			# d.vagrant_vagrantfile = host_vagrantfile
+			# d.force_host_vm = force_host_vm
 
       d.ports =["27017:27017"]
       d.remains_running = true
@@ -55,27 +56,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #     d.name = "dev"
   #     d.build_dir = "./docker/ubuntu"
 
+	# 		# d.vagrant_machine = "host"
+	# 		# d.vagrant_vagrantfile = host_vagrantfile
+	# 		# d.force_host_vm = force_host_vm
 
-	# 		d.vagrant_machine = "host"
-
-	# 		d.vagrant_vagrantfile = host_vagrantfile
-	# 		d.force_host_vm = force_host_vm
   #     #use for testing
   #     # d.cmd = ["ping", "-c 51", "127.0.0.1"]
 
-  #     # d.link("mysql:mysql")
+  #     d.link("mongo:mongo")
 
+  #     # d.cmd = ["/sbin/my_init", "--enable-insecure-key"]
 	# 		d.has_ssh = true
-  #     # d.remains_running = true
+  #     d.remains_running = true
+
+  #     dev.vm.synced_folder "/Users/Michael/Development/Price-Comparison", "/root/price"
 	# 	end
-		
-    		
-	# 	# dev.vm.network "forwarded_port", guest: 6800, host: 6800
-	# 	# dev.vm.network "forwarded_port", guest: 2222, host: 2222
 	# 	dev.vm.hostname = "dev"
 	# end
 
-  # config.ssh.username = 'root'
-  # config.ssh.private_key_path = 'insecure_key'
+  config.ssh.username = 'root'
+  config.ssh.private_key_path = 'insecure_key'
 
 end

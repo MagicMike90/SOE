@@ -1,0 +1,25 @@
+- name: Setup docker environment
+  hosts: all
+  remote_user: root
+  become: yes
+  tasks:
+    - name: update apt cache
+      apt: update_cache=yes
+    - name: install required packages
+      apt: name={{ item }} state=present
+      with_items:
+        - apt-transport-https 
+        - ca-certificates
+        - curl
+        - software-properties-common
+
+    - name: Add Docker’s official GPG key
+      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+    - name: install required packages
+      shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+    - name: Install the latest version of Docker CE
+      apt:
+        name: docker-ce
+        update_cache: yes

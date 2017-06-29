@@ -12,7 +12,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # # -------------- MongoDB --------------
   # config.vm.define "mongo" do |db|
     
-<<<<<<< HEAD
   #   db.vm.provider "docker" do |d|
   #     d.image="mongo:3.4.4"
   #     # d.build_dir = "./docker/mysql"
@@ -20,17 +19,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #     d.vagrant_machine = "host"
 	# 		d.vagrant_vagrantfile = host_vagrantfile
 	# 		d.force_host_vm = force_host_vm
-=======
-    db.vm.provider "docker" do |d|
-      d.image="mongo:3.4.4"
-      # d.build_dir = "./docker/mysql"
-      d.name = "mongo"
-      
-      # d.vagrant_machine = "host"
-			# d.vagrant_vagrantfile = host_vagrantfile
-			# d.force_host_vm = force_host_vm
->>>>>>> 180f51a1f5f95a1f2797624a08dc12d09ef5e5f5
-
   #     d.ports =["27017:27017"]
   #     d.remains_running = true
   #   end
@@ -59,24 +47,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   db.vm.hostname = "mysql"
   # end
 
-  # config.vm.define "nodeapp" do |node|
-    
-  #   node.vm.provider "docker" do |d|
-  #     d.image="node:boron"
-  #     # d.build_dir = "./docker/mysql"
-  #     d.name = "nodeapp"
-  #     d.vagrant_machine = "host"
-	# 		d.vagrant_vagrantfile = host_vagrantfile
-	# 		d.force_host_vm = true
-
-  #     d.ports =["8000:8000"]
-  #     d.remains_running = true
-
-  #     # d.cmd = ["npm","start"]
-  #   end
-  #   # node.vm.synced_folder "../mern/app", "/app"
-  #   node.vm.hostname = "nodeapp"
-  # end
 
   config.vm.provider "docker" do |d|
       config.vm.provider "docker" do |d|

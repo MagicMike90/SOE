@@ -28,13 +28,14 @@ Vagrant.configure("2") do |config|
 	# config.vm.network "private_network", ip: "192.168.50.50"
 	# config.vm.box = "williamyeh/ubuntu-trusty64-docker"
 	# config.vm.box = "lookfwd/scrapybook"
-	config.vm.box = "ubuntu/trusty64"
-	# config.vm.box = "AlbanMontaigu/boot2docker"
+	# config.vm.box = "ubuntu/trusty64"
+	config.vm.box = "AlbanMontaigu/boot2docker"
 
 
 	# Setting up ports
 	(
-		[27017] +  					  #MongoDB
+		[8080] +					  # Node
+		[27017] +  					  # MongoDB
 		[9200] +                      # ES
 		[6379] +                      # Redis
 		[3306] +                      # MySQL
@@ -55,16 +56,6 @@ Vagrant.configure("2") do |config|
 	end
 
 	config.notify_forwarder.port = 22020
-	# config.ssh.insert_key = false
-	#  Disable synced folders (prevents an NFS error on "vagrant up")
-	config.vm.synced_folder "../../mern", "/code/mern",type: "rsync"
 
-#   config.hostmanager.enabled = true
-#   config.hostmanager.manage_guest = true
-#   config.vm.provision :hostmanager
-
-	config.vm.provision :ansible do |ansible|
-		ansible.playbook      = "../ansible/docker.yml"
-		ansible.sudo          = true
-	end
+	config.vm.synced_folder "../mern/app", "/mern/app", type: "rsync", rsync__auto: true
 end

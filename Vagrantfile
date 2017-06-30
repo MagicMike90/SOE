@@ -17,8 +17,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #     # d.build_dir = "./docker/mysql"
   #     d.name = "mongo"
   #     d.vagrant_machine = "host"
-	# 		d.vagrant_vagrantfile = host_vagrantfile
-	# 		d.force_host_vm = force_host_vm
+  #     d.vagrant_vagrantfile = host_vagrantfile
+  #     d.force_host_vm = force_host_vm
   #     d.ports =["27017:27017"]
   #     d.remains_running = true
   #   end
@@ -48,41 +48,51 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # end
 
 
-  config.vm.provider "docker" do |d|
-      config.vm.provider "docker" do |d|
-      d.image = "hello-world"
+  # -------------- Node --------------
+  config.vm.define "node" do |node|
+    
+    node.vm.provider "docker" do |d|
 
-			d.vagrant_machine = "host"
-			d.vagrant_vagrantfile = host_vagrantfile
-			d.force_host_vm = force_host_vm
+      # Map to host vagrant machine 
+      d.vagrant_machine = "host"
+      d.vagrant_vagrantfile = host_vagrantfile
+      d.force_host_vm = force_host_vm
+
+      # d.image="mongo:3.4.4"
+      d.build_dir = "./mern"
+      d.name = "node"
+
+      d.ports =["8080:8080"]
+      d.remains_running = true
     end
+    node.vm.hostname = "node"
+    node.vm.synced_folder "./mern/app", "/app", type: "rsync"
   end
 
-# # -------------- Dev machine --------------
 
-# 	config.vm.define "dev", primary: true do |dev|
+  # config.vm.define "dev", primary: true do |dev|
 	
-# 		dev.vm.provider "docker" do |d|
-# 			d.image = "scrapybook/dev"
-# 			d.name = "dev"
+	# 	dev.vm.provider "docker" do |d|
+  #     d.build_dir = "./docker/dev"
+	# 		d.name = "dev"
 
-# 			d.link("nodeapp:nodeapp")
+	# 		d.link("node:node")
 
-# 			d.vagrant_machine = "host"
-# 			d.vagrant_vagrantfile = host_vagrantfile
-# 			d.force_host_vm = force_host_vm
+	# 		d.vagrant_machine = "host"
+	# 		d.vagrant_vagrantfile = host_vagrantfile
+	# 		d.force_host_vm = force_host_vm
 			
-# 			d.ports =["6800:6800"]
-#       d.has_ssh = true;
-# 		end
+	# 		d.ports =["6800:6800"]
+  #     d.has_ssh = true;
+	# 	end
 		
-# 		dev.vm.synced_folder "../Price-Comparison", "/root/price"
+	# 	dev.vm.synced_folder "../Price-Comparison", "/root/price"
 		
-# 		# dev.vm.network "forwarded_port", guest: 6800, host: 6800
-# 		dev.vm.hostname = "dev"
-# 	end
+	# 	# dev.vm.network "forwarded_port", guest: 6800, host: 6800
+	# 	dev.vm.hostname = "dev"
+	# end
 
-# 	config.ssh.username = 'root'
-# 	config.ssh.private_key_path = 'insecure_key'
+	# config.ssh.username = 'root'
+	# config.ssh.private_key_path = 'insecure_key'
 
 end

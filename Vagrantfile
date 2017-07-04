@@ -9,21 +9,21 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = "docker"
 
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # # -------------- MongoDB --------------
-  # config.vm.define "mongo" do |db|
+  # -------------- MongoDB --------------
+  config.vm.define "mongo" do |db|
     
-  #   db.vm.provider "docker" do |d|
-  #     d.image="mongo:3.4.4"
-  #     # d.build_dir = "./docker/mysql"
-  #     d.name = "mongo"
-  #     d.vagrant_machine = "host"
-  #     d.vagrant_vagrantfile = host_vagrantfile
-  #     d.force_host_vm = force_host_vm
-  #     d.ports =["27017:27017"]
-  #     d.remains_running = true
-  #   end
-  #   db.vm.hostname = "mongo"
-  # end
+    db.vm.provider "docker" do |d|
+      d.image="mongo:3.4.4"
+      # d.build_dir = "./docker/mysql"
+      d.name = "mongo"
+      d.vagrant_machine = "host"
+      d.vagrant_vagrantfile = host_vagrantfile
+      d.force_host_vm = force_host_vm
+      d.ports =["27017:27017"]
+      d.remains_running = true
+    end
+    db.vm.hostname = "mongo"
+  end
   
   # config.vm.define "mysql" do |db|
     
@@ -60,13 +60,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # d.image="mongo:3.4.4"
       d.build_dir = "./mern"
+      d.host_vm_build_dir_options = { :type => "rsync"}
       d.name = "node"
 
       d.ports =["8080:8080"]
       d.remains_running = true
     end
     node.vm.hostname = "node"
-    node.vm.synced_folder "./mern/app", "/app", type: "rsync"
+    node.vm.synced_folder "./mern/app", "/app"
   end
 
 

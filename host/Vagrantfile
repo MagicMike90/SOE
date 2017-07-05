@@ -37,6 +37,7 @@ Vagrant.configure("2") do |config|
 		[8000] +					  # Webpack-dev
 		[8080] +					  # Node
 		[27017] +  					  # MongoDB
+		[27018] +  					  # MongoDB2
 		[9200] +                      # ES
 		[6379] +                      # Redis
 		[3306] +                      # MySQL
@@ -59,4 +60,5 @@ Vagrant.configure("2") do |config|
 	config.notify_forwarder.port = 22020
 
 	config.vm.synced_folder ".", "/vagrant", disabled: true
+	config.vm.synced_folder "../../mern/data", "/var/mongo/data"
 end

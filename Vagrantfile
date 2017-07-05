@@ -13,19 +13,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "mongodb" do |mongo|
     
     mongo.vm.provider "docker" do |d|
-      # d.image="mongo:3.4.4"
+      d.image="mongo"
       d.vagrant_machine = "host"
       d.vagrant_vagrantfile = host_vagrantfile
       d.force_host_vm = force_host_vm
 
-      d.build_dir = "./docker/mongo"
+      # d.build_dir = "./docker/mongo"
+      # d.env = {
+      #   :MONGO_DATA_DIR      => "/data/db",
+      #   :MONGO_LOG_DIR       => "/dev/null",
+      # }
+      d.volumes = ["/var/mongo/data:/data/db"]
       d.name = "mongodb"
       # d.ports =["27018:27017"]
       d.remains_running = true
     end
+
     mongo.vm.hostname = "mongodb"
     mongo.vm.network "forwarded_port", guest: 27017, host: 27018
-    mongo.vm.synced_folder "../mern/data", "/data"
+    # mongo.vm.synced_folder "../mern/data/db", "/data/db"
   end
   
   # config.vm.define "mysql" do |db|

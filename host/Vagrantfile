@@ -34,6 +34,7 @@ Vagrant.configure("2") do |config|
 
 	# Setting up ports
 	(
+		[8000] +					  # Webpack-dev
 		[8080] +					  # Node
 		[27017] +  					  # MongoDB
 		[9200] +                      # ES

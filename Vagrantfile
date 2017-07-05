@@ -10,19 +10,22 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = "docker"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # -------------- MongoDB --------------
-  config.vm.define "mongo" do |db|
+  config.vm.define "mongodb" do |mongo|
     
-    db.vm.provider "docker" do |d|
-      d.image="mongo:3.4.4"
-      # d.build_dir = "./docker/mysql"
-      d.name = "mongo"
+    mongo.vm.provider "docker" do |d|
+      # d.image="mongo:3.4.4"
       d.vagrant_machine = "host"
       d.vagrant_vagrantfile = host_vagrantfile
       d.force_host_vm = force_host_vm
-      d.ports =["27017:27017"]
+
+      d.build_dir = "./docker/mongo"
+      d.name = "mongodb"
+      # d.ports =["27018:27017"]
       d.remains_running = true
     end
-    db.vm.hostname = "mongo"
+    mongo.vm.hostname = "mongodb"
+    mongo.vm.network "forwarded_port", guest: 27017, host: 27018
+    mongo.vm.synced_folder "../mern/data", "/data"
   end
   
   # config.vm.define "mysql" do |db|
@@ -49,25 +52,26 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
 
   # -------------- Node --------------
-  config.vm.define "node" do |node|
+  config.vm.define "mern" do |mern|
     
-    node.vm.provider "docker" do |d|
+    mern.vm.provider "docker" do |d|
 
       # Map to host vagrant machine 
       d.vagrant_machine = "host"
       d.vagrant_vagrantfile = host_vagrantfile
       d.force_host_vm = force_host_vm
 
-      # d.image="mongo:3.4.4"
-      d.build_dir = "./mern"
-      d.host_vm_build_dir_options = { :type => "rsync"}
+      d.build_dir = "../mern"
       d.name = "node"
+      d.link("mongodb:mongodb")
 
-      d.ports =["8080:8080"]
+      # d.ports =["8000:8000"]
       d.remains_running = true
     end
-    node.vm.hostname = "node"
-    node.vm.synced_folder "./mern/app", "/app"
+    mern.vm.hostname = "node"
+    mern.vm.network "forwarded_port", guest: 8000, host: 8000
+    mern.vm.network "forwarded_port", guest: 8080, host: 8080
+    mern.vm.synced_folder "../mern/app", "/usr/src/app"
   end
 
 
